@@ -16,13 +16,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 app.get("/", function(req, res){
-  res.render("home", { listTitle: homeStartingContent});
+  res.render("home", { homeMesg: homeStartingContent});
 });
 app.get("/about", function(req, res){
-res.render("about", { listTitle: aboutContent});
+res.render("about", { aboutMesg: aboutContent});
 });
 app.get("/contact", function(req, res){
-  res.render("contact", { listTitle: contactContent});
+  res.render("contact", { contactMesg: contactContent});
   });
   
 

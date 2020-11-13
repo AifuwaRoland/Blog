@@ -34,6 +34,7 @@ app.post("/compose", function (req, res) {
     title: req.body.boxTitle,
     content: req.body.boxPost
   };
+  console.log(post);
   data.push(post);
   res.redirect("/");
 

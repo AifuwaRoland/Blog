@@ -19,7 +19,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", function (req, res) {
+  //truncate post made to 300 characters
+  data.forEach(function (element) {
+    element.content = element.content.substring(0, 300);
+    element.content += "...";
+  });
   res.render("home", { homeMesg: homeStartingContent, items: data });
+
 });
 app.get("/about", function (req, res) {
   res.render("about", { aboutMesg: aboutContent });
@@ -46,15 +52,20 @@ app.post("/compose", function (req, res) {
 app.get("/posts/:posted", function (req, res) {
   let path = req.params.posted;
   data.forEach(function (element) {
+    //orginal format
     let blogTitle = element.title;
+    let content = element.content;
 
-
+    // convert post to lowercase
     let pathLower = _.lowerCase(path);
     let TitleLower = _.lowerCase(blogTitle);
 
+
+
+
     if (pathLower == TitleLower) {
-  
-      res.render("post", { items: data });
+
+      res.render("post", { title: blogTitle, content: content });
     }
   });
 })

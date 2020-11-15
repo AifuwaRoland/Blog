@@ -19,11 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", function (req, res) {
-  //truncate post made to 100 characters
-  data.forEach(function (element) {
-    element.content = element.content.substring(0, 100);
-    element.content += "...";
-  });
+ 
   res.render("home", { homeMesg: homeStartingContent, items: data });
 
 });
@@ -61,7 +57,8 @@ app.get("/posts/:posted", function (req, res) {
     let TitleLower = _.lowerCase(blogTitle);
 
 
-
+    // <%element.content = element.content.substring(0, 100);%>
+    // <%element.content += "...";%>
 
     if (pathLower == TitleLower) {
 

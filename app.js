@@ -12,7 +12,7 @@ const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pelle
 const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
 const app = express();
-let data = [];
+
 
 
 app.set('view engine', 'ejs');
@@ -23,16 +23,21 @@ app.use(express.static("public"));
 mongoose.connect('mongodb://localhost:27017/blogDB', { useUnifiedTopology: true, useNewUrlParser: true });
 
 //schema
-const postSchema= new mongoose.Schema({
-title: String,
-content: String
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String
 });
 
 //model
-const Post= mongoose.model("Post", postSchema);
+const Post = mongoose.model("Post", postSchema);
 app.get("/", function (req, res) {
- 
-  res.render("home", { homeMesg: homeStartingContent, items: data });
+
+  Post.find({}, function (err, posts) {
+    res.render("home", { homeMesg: homeStartingContent, items: posts });
+
+  });
+
+
 
 });
 app.get("/about", function (req, res) {
@@ -46,39 +51,37 @@ app.get("/compose", function (req, res) {
 });
 
 app.post("/compose", function (req, res) {
- 
-  const post= new Post({
+
+  const post = new Post({
     title: req.body.boxTitle,
-    content:req.body.boxPost
+    content: req.body.boxPost
   });
 
-  post.save(); //save to db
-  res.redirect("/");
+  post.save(function (err) {//save to db
+    if (!err) {
+      res.redirect("/");
+    }
+  });
+
 
 
 });
 
-app.get("/posts/:posted", function (req, res) {
-  let path = req.params.posted;
-  data.forEach(function (element) {
-    //orginal format
-    let blogTitle = element.title;
-    let content = element.content;
+app.get("/posts/:postId", function(req, res){
 
-    // convert post to lowercase
-    let pathLower = _.lowerCase(path);
-    let TitleLower = _.lowerCase(blogTitle);
-
-
-    // <%element.content = element.content.substring(0, 100);%>
-    // <%element.content += "...";%>
-
-    if (pathLower == TitleLower) {
-
-      res.render("post", { title: blogTitle, content: content });
-    }
+  const requestedPostId = req.params.postId;;
+  
+    Post.findOne({_id: requestedPostId}, function(err, post){
+      res.render("post", {
+        title: post.title,
+        content: post.content
+      });
+    });
+  
   });
-})
+  
+
+
 
 
 
